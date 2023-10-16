@@ -4,12 +4,14 @@ const cookie = require("cookie-parser")
 const mongoose = require("mongoose")
 require("dotenv").config()
 
+const routes = require("./routes/index")
 const PORT = process.env.PORT || 5000
 const app = express()
 
 app.use(express.json())
 app.use(cookie())
 app.use(cors())
+app.use("/api", routes)
 
 const start = async () => {
     try {
@@ -20,3 +22,5 @@ const start = async () => {
       console.log(e)
     }
 }
+
+start()
