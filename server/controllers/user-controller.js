@@ -2,7 +2,7 @@ class UserController {
     async registration(req, res) {
         try {
             const {email, password} = req.body
-
+            res.json({message: "User was created"})
         } catch (e) {
 
         }
@@ -19,7 +19,7 @@ class UserController {
 
     async logout(req, res) {
         try {
-            const {email, password} = req.body
+
 
         } catch (e) {
 
@@ -28,7 +28,7 @@ class UserController {
 
     async activate(req, res) {
         try {
-            const {email, password} = req.body
+
 
         } catch (e) {
 
@@ -37,7 +37,7 @@ class UserController {
 
     async refresh(req, res) {
         try {
-            const {email, password} = req.body
+
 
         } catch (e) {
 
@@ -52,3 +52,5 @@ class UserController {
         }
     }
 }
+
+module.exports = new UserController()
