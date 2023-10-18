@@ -1,22 +1,16 @@
-const User = require("../models/user")
-const bcrypt = require("bcrypt")
-const uuid = require("uuid")
+const authenticate = require("../services/auth-service")
+
 
 class UserController {
     async registration(req, res) {
         try {
             const {email, password} = req.body
-            const candidate = await User.findOne({email})
+            const user = await authenticate.registration(email, password)
 
-            if (candidate) {
-                return res.status(400).json({message: `User with email ${email} already exists`})
-            }
-
-            const hashPassword = bcrypt.hashSync(password, 7)
-            const user = await User.create({email, password: hashPassword, activation: uuid.v4()})
-            res.json({message: "User was created"})
+            res.cookie("refreshToken", user.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
+            return res.json(user)
         } catch (e) {
-
+          return res.status(400).json(e.message)
         }
     }
 
