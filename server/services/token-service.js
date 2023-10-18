@@ -5,8 +5,8 @@ class TokenService {
 
     validateAccessToken(token) {
         try {
-            const token = jwt.verify(token, process.env.JWT_ACCESS_SECRET)
-            return token
+            const validated = jwt.verify(token, process.env.JWT_ACCESS_SECRET)
+            return validated
         } catch (e) {
             return null
         }
@@ -14,8 +14,8 @@ class TokenService {
 
     validateRefreshToken(token) {
         try {
-            const token = jwt.verify(token, process.env.JWT_REFRESH_SECRET)
-            return token
+            const validated = jwt.verify(token, process.env.JWT_REFRESH_SECRET)
+            return validated
         } catch (e) {
             return null
         }

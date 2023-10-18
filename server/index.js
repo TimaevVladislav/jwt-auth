@@ -2,6 +2,7 @@ const express = require("express")
 const cors = require("cors")
 const cookie = require("cookie-parser")
 const errorMiddleware = require("./middlewares/error.middleware")
+
 const mongoose = require("mongoose")
 require("dotenv").config()
 
