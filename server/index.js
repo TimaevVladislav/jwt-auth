@@ -1,6 +1,7 @@
 const express = require("express")
 const cors = require("cors")
 const cookie = require("cookie-parser")
+const errorMiddleware = require("./middlewares/error.middleware")
 const mongoose = require("mongoose")
 require("dotenv").config()
 
@@ -12,6 +13,7 @@ app.use(express.json())
 app.use(cookie())
 app.use(cors())
 app.use("/api", routes)
+app.use(errorMiddleware)
 
 const start = async () => {
     try {
