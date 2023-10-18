@@ -1,9 +1,18 @@
 const authenticate = require("../services/auth-service")
+const {validationResult} = require("express-validator")
+const ExceptionApi = require("../exceptions/api.error")
+const User = require("../models/user")
 
 
 class UserController {
     async registration(req, res, next) {
         try {
+            const validation = validationResult(req)
+
+            if (!validation.isEmpty()) {
+                return next(ExceptionApi.BadRequest("Validation error", validation.array()))
+            }
+
             const {email, password} = req.body
             const user = await authenticate.registration(email, password)
 
@@ -14,31 +23,35 @@ class UserController {
         }
     }
 
-    async login(req, res) {
+    async login(req, res, next) {
         try {
             const {email, password} = req.body
+            const user = await authenticate.registration(email, password)
+
+            res.cookie("refreshToken", user.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
+            return res.json(user)
 
         } catch (e) {
-
+          next(e)
         }
     }
 
-    async logout(req, res) {
+    async logout(req, res, next) {
         try {
 
 
         } catch (e) {
-
+          next(e)
         }
     }
 
-    async activate(req, res) {
+    async activate(req, res, next) {
         try {
            const link = req.params.link
            await authenticate.activate(link)
            return res.redirect(process.env.CLIENT_URL)
         } catch (e) {
-           return res.status(400).json(e.message)
+          next(e)
         }
     }
 
@@ -51,11 +64,12 @@ class UserController {
         }
     }
 
-    async getUsers(req, res) {
+    async getUsers(req, res, next) {
         try {
-
+          const users = await User.find()
+          return res.json(users)
         } catch (e) {
-
+          next(e)
         }
     }
 }
