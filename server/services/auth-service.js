@@ -3,6 +3,8 @@ const UserDto = require("../dtos/user-dto")
 const bcrypt = require("bcrypt")
 const uuid = require("uuid")
 
+const ApiError = require("../exceptions/api.error")
+
 const emailService = require("../services/email-service")
 const tokenService = require("../services/token-service")
 
@@ -11,11 +13,11 @@ class AuthService {
         const candidate = await User.findOne({email})
 
         if (!password) {
-            throw new Error("Password must be at least 8 characters long")
+            throw ApiError.BadRequest("Password must be at least 8 characters long")
         }
 
         if (candidate) {
-            throw new Error(`User with email ${email} already exists`)
+            throw ApiError.BadRequest(`User with email ${email} already exists`)
         }
 
         const activation = uuid.v4()
