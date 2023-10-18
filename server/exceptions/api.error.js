@@ -1,5 +1,5 @@
 
-class ApiError extends Error {
+class ExceptionApi extends Error {
     status
     errors
 
@@ -10,12 +10,12 @@ class ApiError extends Error {
     }
 
     static UnauthorizedError() {
-        return new ApiError(401, "User is not authorized")
+        return new ExceptionApi(401, "User is not authorized")
     }
 
     static BadRequest(message, errors = []) {
-        return new ApiError(400, message, errors)
+        return new ExceptionApi(400, message, errors)
     }
 }
 
-module.exports = ApiError
+module.exports = ExceptionApi
