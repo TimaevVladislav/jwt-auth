@@ -3,7 +3,7 @@ const UserDto = require("../dtos/user-dto")
 const bcrypt = require("bcrypt")
 const uuid = require("uuid")
 
-const ApiError = require("../exceptions/api.error")
+const ExceptionApi = require("../exceptions/api.error")
 
 const emailService = require("../services/email-service")
 const tokenService = require("../services/token-service")
@@ -13,11 +13,11 @@ class AuthService {
         const candidate = await User.findOne({email})
 
         if (!password) {
-            throw ApiError.BadRequest("Password must be at least 8 characters long")
+            throw ExceptionApi.BadRequest("Password must be at least 8 characters long")
         }
 
         if (candidate) {
-            throw ApiError.BadRequest(`User with email ${email} already exists`)
+            throw ExceptionApi.BadRequest(`User with email ${email} already exists`)
         }
 
         const activation = uuid.v4()
@@ -34,6 +34,35 @@ class AuthService {
             user: userDto,
             message: "User was created"
         }
+    }
+
+    async login(email, password) {
+        const user = await User.findOne({email})
+
+        if (!user) {
+            throw ExceptionApi.BadRequest(`User with email ${email} not found`)
+        }
+
+        const isPassEquals = bcrypt.compareSync(password, user.password)
+
+        if (!isPassEquals) {
+            throw ExceptionApi.BadRequest("Invalid password")
+        }
+
+        const userDto = new UserDto(user)
+        const tokens = tokenService.generateTokens({...userDto})
+        await tokenService.saveToken(userDto.id, tokens.refreshToken)
+
+        return {
+            ...tokens,
+            user: userDto,
+            message: "User was logged in"
+        }
+    }
+
+    async logout(refreshToken) {
+        const token = await tokenService.deleteToken(refreshToken)
+        return token
     }
 
     async activate(activation) {

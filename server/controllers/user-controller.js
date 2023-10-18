@@ -26,7 +26,7 @@ class UserController {
     async login(req, res, next) {
         try {
             const {email, password} = req.body
-            const user = await authenticate.registration(email, password)
+            const user = await authenticate.login(email, password)
 
             res.cookie("refreshToken", user.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
             return res.json(user)
@@ -38,8 +38,11 @@ class UserController {
 
     async logout(req, res, next) {
         try {
+            const {refreshToken} = req.cookies
+            const token = await authenticate.logout(refreshToken)
 
-
+            res.clearCookie("refreshToken")
+            return res.json(token)
         } catch (e) {
           next(e)
         }
