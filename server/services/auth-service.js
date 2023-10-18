@@ -22,7 +22,7 @@ class AuthService {
         const hashPassword = bcrypt.hashSync(password, 3)
         const user = await User.create({email, password: hashPassword, activation})
 
-        await emailService.authEmail(email, activation)
+        await emailService.authEmail(email, `${process.env.API_URL}/api/activate/${activation}`)
         const userDto = new UserDto(user)
         const tokens = tokenService.generateTokens({...userDto})
         await tokenService.saveToken(userDto.id, tokens.refreshToken)
@@ -32,6 +32,17 @@ class AuthService {
             user: userDto,
             message: "User was created"
         }
+    }
+
+    async activate(activation) {
+        const user = await User.findOne({activation})
+
+        if (!user) {
+            throw new Error("Incorrect activation link")
+        }
+
+        user.isActivated = true
+        await user.save()
     }
 }
 
