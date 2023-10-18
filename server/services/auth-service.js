@@ -75,6 +75,30 @@ class AuthService {
         user.isActivated = true
         await user.save()
     }
+
+    async refresh(refreshToken) {
+        if (!refreshToken) {
+            throw ExceptionApi.UnauthorizedError()
+        }
+
+        const userData = tokenService.validateRefreshToken(refreshToken)
+        const token = await tokenService.findToken(refreshToken)
+
+        if (!userData || !token) {
+            throw ExceptionApi.UnauthorizedError()
+        }
+
+        const user = await User.findById(userData.id)
+        const userDto = new UserDto(user)
+        const tokens = tokenService.generateTokens({...userDto})
+        await tokenService.saveToken(userDto.id, tokens.refreshToken)
+
+        return {
+            ...tokens,
+            user: userDto,
+            message: "User was refreshed"
+        }
+    }
 }
 
 module.exports = new AuthService()
