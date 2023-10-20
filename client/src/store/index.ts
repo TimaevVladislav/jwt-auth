@@ -1,14 +1,16 @@
-import { makeObservable} from "mobx"
+import { makeObservable, observable } from "mobx"
 import {IUser} from "../interfaces/user.interface"
 import {IAuthPayload} from "../interfaces/auth.interface"
-import AuthService from "../services/AuthService";
+import AuthService from "../services/AuthService"
 
 export default class Store {
-    user = {} as IUser
-    isAuth = false
+    // @ts-ignore
+    @observable user: IUser = {} as IUser
+    // @ts-ignore
+    @observable isAuth = false
 
     constructor() {
-        makeObservable(this)
+     makeObservable(this)
     }
 
     setAuth(bool: boolean) {
