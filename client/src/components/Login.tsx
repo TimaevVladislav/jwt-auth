@@ -1,5 +1,6 @@
 import * as React from "react"
 import  {FC, useState} from "react"
+import {observer} from "mobx-react-lite"
 import {Context} from "../index"
 
 const Login: FC = () => {
@@ -30,4 +31,4 @@ const Login: FC = () => {
     );
 };
 
-export default Login
+export default observer(Login)
