@@ -3,6 +3,9 @@ import {IUser} from "../interfaces/user.interface"
 import {IAuthPayload} from "../interfaces/auth.interface"
 import AuthService from "../services/AuthService"
 
+import axios from "axios"
+import UserService from "../services/UserService";
+
 export default class Store {
     // @ts-ignore
     @observable user: IUser = {} as IUser
@@ -53,4 +56,24 @@ export default class Store {
             console.log(e)
         }
     }
+
+   async checkAuth() {
+        try {
+            const response = await axios.get(`${process.env.API_URL}/refresh`, {withCredentials: true})
+            localStorage.setItem("token", response.data.accessToken)
+            this.setAuth(true)
+            this.setUser(response.data.user)
+        } catch (e) {
+            console.log(e)
+        }
+   }
+
+   async fetchUsers() {
+    try {
+        const response = await UserService.fetchUsers()
+        return response.data
+    } catch (e) {
+        console.log(e)
+    }
+   }
 }
