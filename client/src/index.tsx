@@ -1,17 +1,28 @@
+// @ts-ignore
 import React from "react"
+// @ts-ignore
 import ReactDOM from "react-dom/client"
 import "./css/index.css"
 
 import App from "./App"
-import {Provider} from "react-redux"
-import {store} from "./store"
+import Store from "./store/index"
+
+interface State {
+    store: Store
+}
+
+const store = new Store()
+
+export const Context = React.createContext<State>({
+    store
+})
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 
 root.render(
   <React.StrictMode>
-    <Provider store={store}>
-        <App />
-    </Provider>
+       <Context.Provider value={store}>
+            <App />
+       </Context.Provider>
   </React.StrictMode>
 )
